@@ -1,8 +1,14 @@
 package org.lessons.java.exceptions;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Catalogo {
+    private final static String FILE_PATH = "./books.txt";
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
@@ -45,6 +51,46 @@ public class Catalogo {
         }
 
         scan.close();
+
+        //scrivere tutti i dati dei libri in un file
+        FileWriter myWriter = null;
+        try {
+            myWriter = new FileWriter(FILE_PATH, true);
+            for (Book currenBook : catalogoLibri) {
+                myWriter.write(currenBook.toString() + "\n");
+            }
+        } catch (IOException e) {
+            System.out.println("Impossibile creare il file.");
+            System.out.println(e.getMessage());
+        } finally {
+            if(myWriter !=null){
+                try {
+                    myWriter.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        //lettura del file
+        Scanner myScanner = null;
+        try {
+            myScanner = new Scanner(new File(FILE_PATH));
+            while (myScanner.hasNext()){
+                String line = myScanner.nextLine();
+                System.out.println(line);
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (myScanner!=null){
+                try {
+                    myScanner.close();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
 
     }
 
